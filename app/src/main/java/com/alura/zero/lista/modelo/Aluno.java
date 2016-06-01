@@ -1,9 +1,11 @@
 package com.alura.zero.lista.modelo;
 
+import java.io.Serializable;
+
 /**
  * Created by zero on 30/05/16.
  */
-public class Aluno {
+public class Aluno implements Serializable {
 
     private Long id;
     private String nome;

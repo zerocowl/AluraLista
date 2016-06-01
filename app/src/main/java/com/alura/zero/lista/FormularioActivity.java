@@ -1,12 +1,10 @@
 package com.alura.zero.lista;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.alura.zero.lista.dao.AlunoDAO;
@@ -20,7 +18,13 @@ public class FormularioActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formulario);
-        helper = new FormularioHelper(this);
+        helper = new FormularioHelper(FormularioActivity.this);
+        Intent intent = getIntent();
+        Aluno aluno = (Aluno) intent.getSerializableExtra("aluno");
+        if (aluno != null) {
+            helper.preencheFormulario(aluno);
+        }
+
 
         Button btnSalvar = (Button) findViewById(R.id.formulario_salvar);
 
@@ -32,7 +36,11 @@ public class FormularioActivity extends AppCompatActivity {
 
                 Aluno aluno = helper.pegaAluno();
                 AlunoDAO dao = new AlunoDAO(FormularioActivity.this);
-                dao.insere(aluno);
+                if (aluno.getId() != null) {
+                    dao.altera(aluno);
+                } else {
+                    dao.insere(aluno);
+                }
                 dao.close();
                 finish(); //Mata a activity
             }
