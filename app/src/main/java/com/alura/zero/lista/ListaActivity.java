@@ -1,7 +1,11 @@
 package com.alura.zero.lista;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Browser;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.MenuItem;
@@ -15,6 +19,7 @@ import com.alura.zero.lista.dao.AlunoDAO;
 import com.alura.zero.lista.modelo.Aluno;
 
 import java.util.List;
+import java.util.jar.Manifest;
 
 public class ListaActivity extends AppCompatActivity {
 
@@ -67,12 +72,57 @@ public class ListaActivity extends AppCompatActivity {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, final ContextMenu.ContextMenuInfo menuInfo) {
-        MenuItem deletar = menu.add("Deletar");
-        deletar.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        final Aluno aluno = (Aluno) lista.getItemAtPosition(info.position);
+        final String numero = aluno.getTelefone();
+        //Chamada
+        MenuItem lg = menu.add("Ligar");
+        lg.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                Aluno aluno = (Aluno) lista.getItemAtPosition(info.position);
+                if(ActivityCompat.checkSelfPermission(ListaActivity.this, android.Manifest.permission.CALL_PHONE)
+                        != PackageManager.PERMISSION_GRANTED){
+                    ActivityCompat.requestPermissions(ListaActivity.this,new String[]{android.Manifest.permission.CALL_PHONE},123);
+                }else {
+                    Intent intLigar = new Intent(Intent.ACTION_CALL);
+                    intLigar.setData(Uri.parse("tel:" + numero));
+                }
+                return false;
+            }
+        });
+
+
+
+        //SMS
+        MenuItem sms = menu.add("Enviar SMS");
+        Intent intSMS = new Intent(Intent.ACTION_VIEW);
+        intSMS.setData(Uri.parse("sms:"+numero));
+        sms.setIntent(intSMS);
+
+        //MAPA
+        MenuItem mapa = menu.add("Ver no Mapa");
+        Intent intMapa = new Intent(Intent.ACTION_VIEW);
+        String end = aluno.getEndereco();
+        intSMS.setData(Uri.parse("geo:0,0?q="+end));
+        sms.setIntent(intMapa);
+
+        //SITE
+        MenuItem site = menu.add("Ver site");
+        Intent intSite = new Intent(Intent.ACTION_VIEW);
+        String link = aluno.getSite();
+
+        if(!link.startsWith("http://")){
+            link = "http://"+link;
+        }
+        intSite.setData(Uri.parse(link));
+        site.setIntent(intSite);
+
+        MenuItem deletar = menu.add("Deletar");
+        deletar.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+
                 AlunoDAO dao = new AlunoDAO(ListaActivity.this);
                 dao.deletar(aluno);
                 dao.close();
