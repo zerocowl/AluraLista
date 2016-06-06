@@ -15,6 +15,26 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.alura.zero.lista.FormularioActivity"
     >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="225dp">
+        <ImageView
+            android:id="@+id/formulario_foto"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:src="@drawable/person"
+            android:background="#00a8ec"/>
+        <Button
+            android:id="@+id/formulario_botao_foto"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/fundo_camera"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"/>
+
+    </RelativeLayout>
+
 <EditText
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
